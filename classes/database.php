@@ -128,7 +128,7 @@ dsn: 'mysql:host=localhost;
             $copy_id = ($max_copy_id > 0) ? $max_copy_id + 1 : $range_start + 1;
 
             if($copy_id > $range_end){
-                throw new RuntimeException('This format supports up to 99 copies per book.');
+                throw new RuntimeException('Cannot add more than 99 books.');
             }
 
             $stmt = $con->prepare('INSERT INTO Bookcopy (copy_id, book_id, bc_status) VALUES(?,?,?)');
