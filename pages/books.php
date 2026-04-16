@@ -214,32 +214,24 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Noli Me Tangere</td>
-                <td>9789710810736</td>
-                <td>1887</td>
-                <td>National Book Store</td>
-                <td>3</td>
-                <td><span class="badge text-bg-success">2</span></td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">Edit</button>
-                  <button class="btn btn-sm btn-outline-danger">Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Smaller and Smaller Circles</td>
-                <td>9789712721768</td>
-                <td>2002</td>
-                <td>Ateneo de Manila University Press</td>
-                <td>2</td>
-                <td><span class="badge text-bg-warning">1</span></td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">Edit</button>
-                  <button class="btn btn-sm btn-outline-danger">Delete</button>
-                </td>
-              </tr>
+              <?php
+              $viewcopies = $con->viewCopies();
+              foreach($viewcopies as $vc){
+              echo'<tr>';
+              echo'<td>'.$vc['book_id'].'</td>';
+              echo'<td>'.$vc['book_title'].'</td>';
+              echo'<td>'.$vc['book_isbn'].'</td>';
+              echo'<td>'.$vc['book_publication_year'].'</td>';
+              echo'<td>'.$vc['book_publisher'].'</td>';
+              echo'<td>'.$vc['Copies'].'</td>';
+              echo'<td>'.$vc['Available_Copies'].'</td>';
+              echo'<td class="text-end">';
+              echo'<button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">Edit</button>';
+              echo'<button class="btn btn-sm btn-outline-danger">Delete</button>';
+              echo'</td>';
+              echo'</tr>';
+              }
+              ?>
             </tbody>
           </table>
         </div>

@@ -187,4 +187,40 @@ dsn: 'mysql:host=localhost;
             throw $e;
         }    
     }
+
+    function viewCopies(){
+        $con = $this->opencon();
+        return $con->query("SELECT
+        books.book_id,
+        books.book_title,
+        books.book_isbn,
+        books.book_publication_year,
+        books.book_publisher,
+        COUNT(bookcopy.copy_id) AS Copies,
+        SUM(bookcopy.bc_status = 'Available') AS Available_Copies
+        FROM
+        books
+        LEFT JOIN bookcopy ON bookcopy.book_id = books.book_id
+        GROUP BY 1")->fetchAll();
+    }
+
+    function viewUsers(){
+        $con = $this->opencon();
+        return $con->query("SELECT
+        borrowers.borrower_id,
+        CONCAT(borrowers.borrower_firstname, ' ', borrowers.borrower_lastname) AS fullname,
+        borrowers.borrower_email,
+        CASE
+        WHEN borrowers.is_active = '1' THEN 'YES'
+        ELSE 'NO'
+        END AS b_ia,
+        CASE
+        WHEN users.is_active = '1' THEN 'YES'
+        ELSE 'NO'
+        END AS u_ia
+        FROM borrowers
+        JOIN borroweruser ON borroweruser.borrower_id = borrowers.borrower_id
+        JOIN users ON users.user_id = borroweruser.user_id
+    ")->fetchAll();
+    }
 }

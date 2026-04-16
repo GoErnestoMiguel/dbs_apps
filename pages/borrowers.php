@@ -134,30 +134,23 @@ if(isset($_POST['add_borrower_address'])){
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Juan Dela Cruz</td>
-                <td>juan.delacruz@samplemail.com</td>
-                <td><span class="badge text-bg-success">Yes</span></td>
-                <td><span class="badge text-bg-primary">Linked</span></td>
-                <td><span class="badge text-bg-success">Yes</span></td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetPassModal">Reset Password</button>
-                  <button class="btn btn-sm btn-outline-secondary">Toggle Active</button>
-                </td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>Paolo Garcia</td>
-                <td>paolo.garcia@samplemail.com</td>
-                <td><span class="badge text-bg-secondary">No</span></td>
-                <td><span class="badge text-bg-primary">Linked</span></td>
-                <td><span class="badge text-bg-secondary">No</span></td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetPassModal">Reset Password</button>
-                  <button class="btn btn-sm btn-outline-secondary">Toggle Active</button>
-                </td>
-              </tr>
+              <?php
+              $viewusers = $con->viewUsers();
+              foreach($viewusers as $vu){
+              echo'<tr>';
+              echo'<td>'.$vu['borrower_id'].'</td>';
+              echo'<td>'.$vu['fullname'].'</td>';
+              echo'<td>'.$vu['borrower_email'].'</td>';
+              echo'<td><spa class="badge text-bg-primary">'.$vu['b_ia'].'</span></td>';
+              echo'<td><span class="badge text-bg-primary">Linked</span></td>';
+              echo'<td><span class="badge text-bg-primary">'.$vu['u_ia'].'</span></td>';
+              echo'<td class="text-end">';
+              echo'<button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetPassModal">Reset Password</button>';
+              echo'<button class="btn btn-sm btn-outline-secondary">Toggle Active</button>';
+              echo'</td>';
+              echo'</tr>';
+              }
+              ?> -
             </tbody>
           </table>
         </div>
