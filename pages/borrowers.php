@@ -85,14 +85,15 @@ if(isset($_POST['add_borrower_address'])){
 <body>
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-semibold" href="admin-dashboard.html">Library Admin</a>
+    <a class="navbar-brand fw-semibold" href="admin-dashboard.php">Library Admin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBorrowersAdmin">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div id="navBorrowersAdmin" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto gap-lg-1">
-        <li class="nav-item"><a class="nav-link" href="admin-dashboard.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="admin-dashboard.php">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="books.php">Books</a></li>
+        <li class="nav-item"><a class="nav-link" href="authors-genres.php">Authors &amp; Genres</a></li>
         <li class="nav-item"><a class="nav-link active" href="borrowers.php">Borrowers</a></li>
         <li class="nav-item"><a class="nav-link" href="checkout.html">Checkout</a></li>
         <li class="nav-item"><a class="nav-link" href="return.html">Return</a></li>
@@ -137,20 +138,24 @@ if(isset($_POST['add_borrower_address'])){
               <?php
               $viewusers = $con->viewUsers();
               foreach($viewusers as $vu){
+              $borrowerStatus = strtoupper(trim((string)$vu['b_ia']));
+              $userStatus = strtoupper(trim((string)$vu['u_ia']));
+              $borrowerBadgeClass = ($borrowerStatus === 'YES') ? 'text-bg-success' : 'text-bg-danger';
+              $userBadgeClass = ($userStatus === 'YES') ? 'text-bg-success' : 'text-bg-danger';
               echo'<tr>';
               echo'<td>'.$vu['borrower_id'].'</td>';
               echo'<td>'.$vu['fullname'].'</td>';
               echo'<td>'.$vu['borrower_email'].'</td>';
-              echo'<td><spa class="badge text-bg-primary">'.$vu['b_ia'].'</span></td>';
+              echo'<td><span class="badge '.$borrowerBadgeClass.'">'.$borrowerStatus.'</span></td>';
               echo'<td><span class="badge text-bg-primary">Linked</span></td>';
-              echo'<td><span class="badge text-bg-primary">'.$vu['u_ia'].'</span></td>';
+              echo'<td><span class="badge '.$userBadgeClass.'">'.$userStatus.'</span></td>';
               echo'<td class="text-end">';
               echo'<button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#resetPassModal">Reset Password</button>';
               echo'<button class="btn btn-sm btn-outline-secondary">Toggle Active</button>';
               echo'</td>';
               echo'</tr>';
               }
-              ?> -
+              ?>
             </tbody>
           </table>
         </div>
