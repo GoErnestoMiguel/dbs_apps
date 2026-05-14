@@ -18,6 +18,7 @@ try {
 }
 
 $totalBooks = (int)($overview['total_books'] ?? 0);
+$totalCopies = (int)($overview['total_copies'] ?? 0);
 $openLoans = (int)($overview['open_loans'] ?? 0); 
 $overdueItems = (int)($overview['overdue_items'] ?? 0);
 ?>
@@ -45,7 +46,7 @@ $overdueItems = (int)($overview['overdue_items'] ?? 0);
 				<li class="nav-item"><a class="nav-link" href="books.php">Books</a></li>
 				<li class="nav-item"><a class="nav-link" href="authors-genres.php">Authors &amp; Genres</a></li>
 				<li class="nav-item"><a class="nav-link" href="borrowers.php">Borrowers</a></li>
-				<li class="nav-item"><a class="nav-link" href="checkout.html">Checkout</a></li>
+				<li class="nav-item"><a class="nav-link" href="checkout.php">Checkout</a></li>
 				<li class="nav-item"><a class="nav-link" href="return.html">Return</a></li>
 				<li class="nav-item"><a class="nav-link" href="catalog.html">Catalog</a></li>
 			</ul>
