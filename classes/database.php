@@ -66,7 +66,8 @@ dsn: 'mysql:host=localhost;
 
     function viewBorrowerUser(){
         $con = $this->opencon();
-        return $con->query('SELECT * from Borrowers')->fetchAll();
+        return $con->query('SELECT * from Borrowers 
+        ORDER BY borrower_id')->fetchAll();
     }
 
     function insertBorrowerAddress($borrower_id, $house_number, $street, $barangay, $city, $province, $postal_code, $is_primary){
@@ -107,7 +108,8 @@ dsn: 'mysql:host=localhost;
 
     function viewBooks(){
         $con = $this->opencon();
-        return $con->query('SELECT * from Books')->fetchAll();
+        return $con->query('SELECT * from Books
+        ORDER BY book_id')->fetchAll();
     }
 
     function addCopy($book_id, $status){
@@ -146,7 +148,8 @@ dsn: 'mysql:host=localhost;
 
     function viewAuthors(){
         $con = $this->opencon();
-        return $con->query('SELECT * from Authors')->fetchAll();
+        return $con->query('SELECT * from Authors
+        ORDER BY author_id')->fetchAll();
     }
 
     function addBookAuthor($book_id, $author_id){
@@ -168,7 +171,8 @@ dsn: 'mysql:host=localhost;
 
     function viewGenres(){
         $con = $this->opencon();
-        return $con->query('SELECT * from Genres')->fetchAll();
+        return $con->query('SELECT * from Genres
+        ORDER BY genre_id')->fetchAll();
     }
 
     function addGenre($genre_id, $book_id){
@@ -221,7 +225,7 @@ dsn: 'mysql:host=localhost;
         FROM borrowers
         JOIN borroweruser ON borroweruser.borrower_id = borrowers.borrower_id
         JOIN users ON users.user_id = borroweruser.user_id
-    ")->fetchAll();
+    ORDER BY users.user_id")->fetchAll();
     }
 
     function viewDashboardOverview(){
@@ -399,6 +403,25 @@ dsn: 'mysql:host=localhost;
             $con->commit();
             return true;
         }catch (PDOException $e) {
+            if ($con->inTransaction()) {
+                $con->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    function updateGenre($genre_id, $genre_name){
+        $con = $this->opencon();
+
+        try {
+            $con->beginTransaction();
+
+            $stmt = $con->prepare('UPDATE genres SET genre_name = ? WHERE genre_id = ?');
+            $stmt->execute([$genre_name, $genre_id]);
+
+            $con->commit();
+            return true;
+        } catch (PDOException $e) {
             if ($con->inTransaction()) {
                 $con->rollBack();
             }

@@ -9,6 +9,8 @@ $flashMessage = '';
 $error_message = null;
 $editAuthorStatus = null;
 $editAuthorMessage = '';
+$editGenreStatus = null;
+$editGenreMessage = '';
 
 if (isset($_POST['add_author'])) {
     $firstname = trim($_POST['author_firstname'] ?? '');
@@ -67,6 +69,20 @@ if (isset($_POST['delete_author'])) {
         exit();
     } catch (Exception $e) {
         $error_message = "Cannot delete this author. It may be linked to books.";
+    }
+}
+
+if (isset($_POST['edit_genre'])) {
+    $genre_id = $_POST['edit_genre_id'] ?? '';
+    $genre_name = trim($_POST['edit_genre_name']) ?? '';
+
+    try {
+        $con->updateGenre($genre_id, $genre_name);
+        $editGenreStatus = 'success';
+        $editGenreMessage = 'Genre updated successfully.';
+    } catch (Exception $e) {
+        $editGenreStatus = 'error';
+        $editGenreMessage = 'Error updating genre.';
     }
 }
 
@@ -271,6 +287,11 @@ try {
                     <td><?php echo htmlspecialchars((string)($genre['genre_id'] ?? '')); ?></td>
                     <td><?php echo htmlspecialchars((string)($genre['genre_name'] ?? '')); ?></td>
                     <td class="text-end">
+                        <button type="button" class="btn btn-sm btn-primary me-1" data-bs-toggle="modal" data-bs-target="#editGenreModal"
+                            data-genre-id="<?php echo htmlspecialchars((string)($genre['genre_id'] ?? '')); ?>"
+                            data-genre-name="<?php echo htmlspecialchars((string)($genre['genre_name'] ?? '')); ?>">
+                            Edit
+                        </button>
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteGenreModal"
                             data-genre-id="<?php echo htmlspecialchars((string)($genre['genre_id'] ?? '')); ?>"
                             data-genre-name="<?php echo htmlspecialchars((string)($genre['genre_name'] ?? '')); ?>">
@@ -351,6 +372,34 @@ try {
       </div>
     </div>
   </div>
+</div>
+
+<div class="modal fade" id="editGenreModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Genre</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form action="#" method="POST">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Genre ID</label>
+                            <input class="form-control" id="edit_genre_id" name="edit_genre_id" required readonly>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label class="form-label">Genre Name</label>
+                            <input class="form-control" id="edit_genre_name" name="edit_genre_name" required>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary w-100" name="edit_genre" type="submit">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="deleteGenreModal" tabindex="-1" aria-hidden="true">
@@ -448,6 +497,38 @@ try {
             document.getElementById('delete_author_name').textContent = btn.getAttribute('data-author-name') || '';
         });
     }
+
+        const editGenreStatus = <?php echo json_encode($editGenreStatus); ?>;
+        const editGenreMessage = <?php echo json_encode($editGenreMessage); ?>;
+
+        if(editGenreStatus == 'success') {
+            Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: editGenreMessage,
+            confirmButtonText: 'OK'
+        });
+        } else if(editGenreStatus == 'error') {
+            Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: editGenreMessage,
+            confirmButtonText: 'OK'
+        });
+    }
+
+        const editGenreModal = document.getElementById('editGenreModal');
+        if(editGenreModal) {
+            editGenreModal.addEventListener('show.bs.modal', function(event){
+                const btn = event.relatedTarget;
+                if(!btn){ 
+                    return;
+                }
+
+                document.getElementById('edit_genre_id').value = btn.getAttribute('data-genre-id') || '';
+                document.getElementById('edit_genre_name').value = btn.getAttribute('data-genre-name') || '';
+                });
+        }
 
     const deleteGenreModal = document.getElementById('deleteGenreModal');
     if(deleteGenreModal) {
