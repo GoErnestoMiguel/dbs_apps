@@ -521,4 +521,54 @@ dsn: 'mysql:host=localhost;
             throw $e;
         }
     }
+
+    function getOnLoanItem(){
+        $con = $this->opencon();
+        return $con->query("SELECT loanitem.loan_item_id, books.book_title, loanitem.li_duedate FROM loanitem JOIN bookcopy ON loanitem.copy_id = bookcopy.copy_id JOIN books ON bookcopy.book_id = books.book_id JOIN loan ON loanitem.loan_id = loan.loan_id WHERE loanitem.li_returned_at IS NULL AND loan.loan_status = 'OPEN'   
+        ")->fetchAll();
+    }
+
+    function processLoanReturns($loanitemID, $returnedAt, $conditionIn){
+        $con = $this->opencon();
+        try{
+            $con->beginTransaction();
+
+            $getLoanItemstmt = $con->prepare("SELECT copy_id, loan_id FROM loanitem WHERE loan_item_id = ?");
+            $getLoanItemstmt->execute([$loanitemID]);
+
+            $Loanitem = $getLoanItemstmt->fetch();
+
+            if(!$Loanitem){
+                throw new Exception("Loan Item ". $loanitemID ." is not existing");
+            }
+
+            $copy_id = $Loanitem['copy_id'];
+            $loan_id = $Loanitem['loan_id'];
+
+            $updateLoanItemstmt = $con->prepare("UPDATE loanitem SET li_returned_at = ?,
+            condition_in = ? 
+            WHERE loan_item_id = ?");
+            $updateLoanItemstmt->execute([$returnedAt, $conditionIn, $loanitemID]);
+
+            $updateBookCopystmt = $con->prepare("UPDATE bookcopy SET bc_status = 'AVAILABLE' WHERE copy_id = ?");
+            $updateBookCopystmt->execute([$copy_id]);
+
+            $countRemainingstmt = $con->prepare("SELECT COUNT(*) AS unreturned_count FROM loanitem WHERE loan_id = ? AND li_returned_at IS NULL");
+            $countRemainingstmt->execute([$loan_id]);
+
+            $result = $countRemainingstmt->fetch();
+
+            if($result['unreturned_count'] == 0){
+                $updateloanstmt = $con->prepare("UPDATE loan SET loan_status = 'CLOSED' WHERE loan_id = ?");
+                $updateloanstmt->execute([$loan_id]);
+            }
+            $con->commit();
+            return true;
+        }catch(PDOException $e){    
+            if($con->inTransaction()){
+                $con->rollBack();
+            }
+            throw $e;
+        }
+    }
 }

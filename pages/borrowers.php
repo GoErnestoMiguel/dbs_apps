@@ -96,7 +96,7 @@ if(isset($_POST['add_borrower_address'])){
         <li class="nav-item"><a class="nav-link" href="authors-genres.php">Authors &amp; Genres</a></li>
         <li class="nav-item"><a class="nav-link active" href="borrowers.php">Borrowers</a></li>
         <li class="nav-item"><a class="nav-link" href="checkout.php">Checkout</a></li>
-        <li class="nav-item"><a class="nav-link" href="return.html">Return</a></li>
+        <li class="nav-item"><a class="nav-link" href="return.php">Return</a></li>
       </ul>
       <div class="d-flex align-items-center gap-2">
         <span class="badge badge-soft">Role: ADMIN</span>
